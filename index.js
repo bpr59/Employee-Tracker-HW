@@ -70,3 +70,16 @@ app.post('/employee', (req, res) =>{
         console.log(err);
     })    
 });
+
+//Update a specific employee from the DB
+app.put('/employee', (req, res) =>{
+    let emp = req.body;
+    var sql = 'SET @id = ?; SET @firstName = ?; SET @lastName = ?; SET @role = ?; SET @manager = ?; \
+    CALL employeeAddOrEdit(@id,@firstName,@lastName,@role,@manager);';
+    mysqlConnection.query(sql,[emp.id, emp.firstName, emp.lastName, emp.role, emp.manager], (err, rows, fields) =>{
+        if(!err)
+        res.send('Employee update was successful.');
+        else
+        console.log(err);
+    })    
+});
