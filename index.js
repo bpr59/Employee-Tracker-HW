@@ -32,3 +32,14 @@ app.get('/employee', (req, res) =>{
         console.log(err);
     })    
 });
+
+//Get a specific employee from the DB
+app.get('/employee/:id', (req, res) =>{
+    mysqlConnection.query('SELECT * FROM employee WHERE EmpID = ? ', [req.params.id], (err, rows, fields) =>{
+        if(!err)
+        res.send(rows);
+        //console.log(rows);
+        else
+        console.log(err);
+    })    
+});
