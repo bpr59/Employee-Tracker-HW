@@ -21,3 +21,14 @@ mysqlConnection.connect((err) =>{
 })
 
 app.listen(3000,()=>console.log('Express server is listening at port 3000!'));
+
+//Get all the employees in the DB
+app.get('/employee', (req, res) =>{
+    mysqlConnection.query('SELECT * FROM employee', (err, rows, fields) =>{
+        if(!err)
+        res.send(rows);
+        //console.log(rows);
+        else
+        console.log(err);
+    })    
+});
