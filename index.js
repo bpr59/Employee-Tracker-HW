@@ -54,3 +54,19 @@ app.delete('/employee/:id', (req, res) =>{
         console.log(err);
     })    
 });
+
+//Insert a specific employee from the DB
+app.post('/employee', (req, res) =>{
+    let emp = req.body;
+    var sql = 'SET @id = ?; SET @firstName = ?; SET @lastName = ?; SET @role = ?; SET @manager = ?; \
+    CALL employeeAddOrEdit(@id,@firstName,@lastName,@role,@manager);';
+    mysqlConnection.query(sql,[emp.id, emp.firstName, emp.lastName, emp.role, emp.manager], (err, rows, fields) =>{
+        if(!err)
+        rows.forEach(element => {
+            if (element.constructor == Array)
+            res.send('Inserted employee id : ' + element[0].id);         
+        });
+        else
+        console.log(err);
+    })    
+});
