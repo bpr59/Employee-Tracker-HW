@@ -8,7 +8,7 @@ app.use(bodyparser.json());
 var mysqlConnection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '',
+    password: 'root',
     database: 'employeeDB',
     multipleStatements : true
 });
@@ -58,14 +58,11 @@ app.delete('/employee/:id', (req, res) =>{
 //Insert a specific employee from the DB
 app.post('/employee', (req, res) =>{
     let emp = req.body;
-    var sql = 'SET @id = ?; SET @firstName = ?; SET @lastName = ?; SET @role = ?; SET @manager = ?; \
-    CALL employeeAddOrEdit(@id,@firstName,@lastName,@role,@manager);';
-    mysqlConnection.query(sql,[emp.id, emp.firstName, emp.lastName, emp.role, emp.manager], (err, rows, fields) =>{
+    var sql = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
+    console.log(emp);
+    mysqlConnection.query(sql,[emp.first_name, emp.last_name, emp.role_id, emp.manager_id], (err, rows, fields) =>{
         if(!err)
-        rows.forEach(element => {
-            if (element.constructor == Array)
-            res.send('Inserted employee id : ' + element[0].id);         
-        });
+        res.send('Employee update was successful.');
         else
         console.log(err);
     })    
@@ -74,9 +71,9 @@ app.post('/employee', (req, res) =>{
 //Update a specific employee from the DB
 app.put('/employee', (req, res) =>{
     let emp = req.body;
-    var sql = 'SET @id = ?; SET @firstName = ?; SET @lastName = ?; SET @role = ?; SET @manager = ?; \
-    CALL employeeAddOrEdit(@id,@firstName,@lastName,@role,@manager);';
-    mysqlConnection.query(sql,[emp.id, emp.firstName, emp.lastName, emp.role, emp.manager], (err, rows, fields) =>{
+    var sql = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
+    console.log(emp);
+    mysqlConnection.query(sql,[emp.first_name, emp.last_name, emp.role_id, emp.manager_id], (err, rows, fields) =>{
         if(!err)
         res.send('Employee update was successful.');
         else
