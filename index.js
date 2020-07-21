@@ -1,3 +1,4 @@
+//const Prompt = require("./prompt");
 const mysql =require('mysql');
 const express =require('express')
 var app = express();
@@ -9,7 +10,7 @@ var mysqlConnection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: 'root',
-    database: 'employeeDB',
+    database: 'employee_trackerDB',
     multipleStatements : true
 });
 
@@ -35,7 +36,7 @@ app.get('/employee', (req, res) =>{
 
 //Get a specific employee from the DB
 app.get('/employee/:id', (req, res) =>{
-    mysqlConnection.query('SELECT * FROM employee WHERE EmpID = ? ', [req.params.id], (err, rows, fields) =>{
+    mysqlConnection.query('SELECT * FROM employee WHERE id = ? ', [req.params.id], (err, rows, fields) =>{
         if(!err)
         res.send(rows);
         //console.log(rows);
@@ -46,7 +47,7 @@ app.get('/employee/:id', (req, res) =>{
 
 //Delete a specific employee from the DB
 app.delete('/employee/:id', (req, res) =>{
-    mysqlConnection.query('DELETE FROM employee WHERE EmpID = ? ', [req.params.id], (err, rows, fields) =>{
+    mysqlConnection.query('DELETE FROM employee WHERE id = ? ', [req.params.id], (err, rows, fields) =>{
         if(!err)
         res.send('Employee was deleted successfully');
         //console.log();
