@@ -43,7 +43,7 @@ function start() {
         ]
     })
     .then(function(answer) {
-      // based on their answer, either call the bid or the post functions
+      
       if (answer.options === "View all employees") {
         showEmployees();
       }
@@ -73,24 +73,21 @@ function start() {
     });
 }
 
-// function to handle posting new items up for auction
 function showEmployees() {
-      // when finished prompting, insert a new item into the db with that info
       mysqlConnection.query('SELECT * FROM employee', (err, rows, fields) =>{
         if(!err)
-        res.send(rows);
-        //console.log(rows);
+        console.log(rows);
         else
         console.log(err);
+        start();
     }) 
     };
 
 
 // function empDepartment() {
-//   // query the database for all items being auctioned
+//   
 //   connection.query("SELECT * FROM auctions", function(err, results) {
 //     if (err) throw err;
-//     // once you have the items, prompt the user for which they'd like to bid on
 //     inquirer
 //       .prompt([
 //         {
@@ -112,7 +109,7 @@ function showEmployees() {
 //         }
 //       ])
 //       .then(function(answer) {
-//         // get the information of the chosen item
+//         
 //         var chosenItem;
 //         for (var i = 0; i < results.length; i++) {
 //           if (results[i].item_name === answer.choice) {
@@ -120,9 +117,9 @@ function showEmployees() {
 //           }
 //         }
 
-//         // determine if bid was high enough
+//    
 //         if (chosenItem.highest_bid < parseInt(answer.bid)) {
-//           // bid was high enough, so update db, let the user know, and start over
+//          
 //           connection.query(
 //             "UPDATE auctions SET ? WHERE ?",
 //             [
@@ -141,7 +138,7 @@ function showEmployees() {
 //           );
 //         }
 //         else {
-//           // bid wasn't high enough, so apologize and start over
+//           
 //           console.log("Your bid was too low. Try again...");
 //           start();
 //         }
