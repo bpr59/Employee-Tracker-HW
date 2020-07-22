@@ -74,7 +74,7 @@ function start() {
 }
 
 function showEmployees() {
-      mysqlConnection.query('SELECT * FROM employee', (err, rows, fields) =>{
+      mysqlConnection.query('SELECT employee.first_name, employee.last_name, role.title, salary, department.dept_name FROM employee, role, department', (err, rows, fields) =>{
         if(!err)
         console.table(rows);
         else
