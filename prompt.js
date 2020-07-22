@@ -74,7 +74,7 @@ function start() {
 }
 
 function showEmployees() {
-      mysqlConnection.query('SELECT employee.first_name, employee.last_name, role.title, salary, department.dept_name FROM employee, role, department', (err, rows, fields) =>{
+      mysqlConnection.query('SELECT employee.first_name, employee.last_name, role.title, role.salary, department.dept_name FROM employee INNER JOIN role ON employee.role_id = role.id LEFT JOIN department ON department.dept_name = role.department_id', (err, rows, fields) =>{
         if(!err)
         console.table(rows);
         else
@@ -114,14 +114,48 @@ function showEmployees() {
     };
 
     function addEmployee() {
-      mysqlConnection.query('SELECT employee AS role_id FROM employee INNER JOIN id ON role = department_id', (err, rows, fields) =>{
-        if(!err)
-        console.log(rows);
-        else
-        console.log(err);
-        start();
-    }) 
-    };
+      inquirer
+        .prompt([
+          {
+            name: "first_name",
+            type: "input",
+            message: "What's the employee's first name?"
+          },
+          {
+            name: "last_name",
+            type: "input",
+            message: "What's the employee's last name?"
+          },
+          {
+            name: "role",
+            type: "input",
+            message: "What would be the role of this employee?",
+          },
+          {
+            name: "manager",
+            type: "input",
+            message: "Who would be the employee's manager?",
+          }
+        ])
+        .then(function(answer) {
+          // when finished prompting, insert a new item into the db with that info
+          connection.query(
+            "INSERT INTO auctions SET ?",
+            {
+              item_name: answer.item,
+              category: answer.category,
+              starting_bid: answer.startingBid || 0,
+              highest_bid: answer.startingBid || 0
+            },
+            function(err) {
+              if (err) throw err;
+              console.log("Your auction was created successfully!");
+              // re-prompt the user for if they want to bid or post
+              start();
+            }
+          );
+        });
+    }
 
     function removeEmployee() {
       mysqlConnection.query('SELECT employee AS role_id FROM employee INNER JOIN id ON role = department_id', (err, rows, fields) =>{
