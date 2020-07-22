@@ -84,9 +84,9 @@ function showEmployees() {
     };
 
     function empDepartment() {
-      mysqlConnection.query('SELECT employee AS role_id FROM employee INNER JOIN id ON role = department_id', (err, rows, fields) =>{
+      mysqlConnection.query('SELECT employee.first_name, employee.last_name, employee.role_id FROM employee INNER JOIN role ON employee.role_id = role.department_id', (err, rows, fields) =>{
         if(!err)
-        console.log(rows);
+        console.table(rows);
         else
         console.log(err);
         start();
@@ -94,9 +94,9 @@ function showEmployees() {
     };
 
     function empManager() {
-      mysqlConnection.query('SELECT employee AS role_id FROM employee INNER JOIN id ON role = department_id', (err, rows, fields) =>{
+      mysqlConnection.query('SELECT employee.first_name, employee.last_name, employee.manager_id FROM employee', (err, rows, fields) =>{
         if(!err)
-        console.log(rows);
+        console.table(rows);
         else
         console.log(err);
         start();
@@ -106,7 +106,7 @@ function showEmployees() {
     function viewRoles() {
       mysqlConnection.query('SELECT * FROM role', (err, rows, fields) =>{
         if(!err)
-        console.log(rows);
+        console.table(rows);
         else
         console.log(err);
         start();
