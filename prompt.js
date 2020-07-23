@@ -63,7 +63,7 @@ function start() {
         case "Add employee":
         addEmployee();
         break;
-        
+
         case "Remove employee":
         removeEmployee();
         break;
@@ -133,15 +133,20 @@ function showEmployees() {
             message: "What's the employee's last name?"
           },
           {
-            name: "role",
-            type: "input",
+            name: "role_id",
+            type: "list",
             message: "What would be the role of this employee?",
+            choices: [
+              "1", "2", "3", "4", "5", "6", "7", "8"
+            ]
           },
           {
-            name: "manager",
-            type: "input",
+            name: "manager_id",
+            type: "list",
             message: "Who would be the employee's manager?",
-
+            choices: [
+              "1", "2", "3", "4", "5", "6", "7", "8", "9"
+            ]
           }
         ])
         .then(function(emp) {
@@ -188,3 +193,24 @@ function showEmployees() {
     // };
 
 //module.exports = prompt;
+
+
+// "associate_producer",
+// "producer",
+// "production_manager",
+// "director",
+// "technical_director",
+// "engineer",
+// "talent",
+// "vp_production"
+
+
+// "Jonathan Smith",
+// "Peter Rivers",
+// "Monica Rivera",
+// "Karla Tovar",
+// "Cesar Gregorious",
+// "Carlos Thompson",
+// "Mayra Liverpool",
+// "Rachel Nichols",
+// "Jorge Knight"
