@@ -79,7 +79,7 @@ function start() {
     });  
 }
 
-function showEmployees() {
+  function showEmployees() {
       mysqlConnection.query('SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.dept_name FROM employee INNER JOIN role ON role.id = employee.role_id INNER JOIN department ON role.department_id = department.id', (err, rows, fields) =>{
         if(!err)
         console.table(rows);
@@ -89,7 +89,7 @@ function showEmployees() {
     }) 
     };
 
-    function empDepartment() {
+  function empDepartment() {
       mysqlConnection.query('SELECT employee.first_name, employee.last_name, employee.role_id, department.dept_name FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id', (err, rows, fields) =>{
         if(!err)
         console.table(rows);
@@ -99,7 +99,7 @@ function showEmployees() {
     }) 
     };
 
-    function empManager() {
+  function empManager() {
       mysqlConnection.query('SELECT employee.first_name, employee.last_name, role.title, manager_id FROM employee INNER JOIN role ON role.id = employee.role_id', (err, rows, fields) =>{
         if(!err)
         console.table(rows);
@@ -109,7 +109,7 @@ function showEmployees() {
     }) 
     };
 
-    function viewRoles() {
+  function viewRoles() {
       mysqlConnection.query('SELECT * FROM role', (err, rows, fields) =>{
         if(!err)
         console.table(rows);
@@ -119,7 +119,7 @@ function showEmployees() {
     }) 
     };
 
-    function addEmployee() {
+  function addEmployee() {
       inquirer
         .prompt([
           {
@@ -134,18 +134,23 @@ function showEmployees() {
           },
           {
             name: "role_id",
-            type: "list",
+            type: "input",
             message: "What would be the role of this employee?",
-            choices: [
-              "1", "2", "3", "4", "5", "6", "7", "8"
-            ]
           },
+          // {
+          //   name: "role_id",
+          //   type: "list",
+          //   message: "What would be the role of this employee?",
+          //   choices: [
+          //     "1", "2", "3", "4", "5", "6", "7", "8"
+          //   ]
+          // },
           {
             name: "manager_id",
             type: "list",
             message: "Who would be the employee's manager?",
             choices: [
-              "1", "2", "3", "4", "5", "6", "7", "8", "9"
+              "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
             ]
           }
         ])
@@ -154,23 +159,47 @@ function showEmployees() {
           console.log(emp);
           mysqlConnection.query(sql,[emp.first_name, emp.last_name, emp.role_id, emp.manager_id], (err, rows, fields) =>{
               if(!err)
-              res.send('Employee added successfully.');
+              //res.send('Employee added successfully.');
+              console.log(rows);
               else
               console.log(err);
               start();
-          })    
+            });    
         });
     }
 
-    // function removeEmployee() {
-    //   mysqlConnection.query('SELECT employee AS role_id FROM employee INNER JOIN id ON role = department_id', (err, rows, fields) =>{
-    //     if(!err)
-    //     console.log(rows);
-    //     else
-    //     console.log(err);
-    //     start();
-    // }) 
-    // };
+  //   function removeEmployee() {
+  //     inquirer
+  //       .prompt([
+  //         {
+  //           name: "employee",
+  //           type: "list",
+  //           message: "Select which employee you want to remove",
+  //           choices: [
+  //             "10", "11", "12", "13"
+  //           ]
+  //         }
+  //         ])
+  //   .then(function(req) {
+  //     mysqlConnection.query('DELETE FROM employee WHERE role_id = employee.id', (err, rows, fields) =>{
+  //       if(!err)
+  //       console.log(rows);
+  //       else
+  //       console.log(err);
+  //       start();
+  //     });
+  //   });  
+  // }
+
+    function removeEmployee() {
+      mysqlConnection.query('DELETE FROM employee WHERE id = employee.id ', (err, rows, fields) =>{
+          if(!err)
+          //res.send('Employee was deleted successfully');
+          console.log();
+          else
+          console.log(err);
+      });   
+    }
 
     // function updateRole() {
     //   mysqlConnection.query('SELECT employee AS role_id FROM employee INNER JOIN id ON role = department_id', (err, rows, fields) =>{
@@ -195,22 +224,4 @@ function showEmployees() {
 //module.exports = prompt;
 
 
-// "associate_producer",
-// "producer",
-// "production_manager",
-// "director",
-// "technical_director",
-// "engineer",
-// "talent",
-// "vp_production"
 
-
-// "Jonathan Smith",
-// "Peter Rivers",
-// "Monica Rivera",
-// "Karla Tovar",
-// "Cesar Gregorious",
-// "Carlos Thompson",
-// "Mayra Liverpool",
-// "Rachel Nichols",
-// "Jorge Knight"
