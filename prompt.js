@@ -43,34 +43,40 @@ function start() {
         ]
     })
     .then(function(answer) {
-      
-      if (answer.options === "View all employees") {
+      switch (answer.options) {
+      case "View all employees":
         showEmployees();
-      }
-      else if(answer.options === "View all employees by department") {
+        break;
+
+        case "View all employees by department":
         empDepartment();
-      } 
-      else if(answer.options === "View all employees by manager") {
+        break;
+
+        case "View all employees by manager":
         empManager();
-      } 
-      else if(answer.options === "View all roles") {
+        break;
+
+        case "View all roles":
         viewRoles();
-      } 
-      else if(answer.options === "Add employee") {
+        break;
+
+        case "Add employee":
         addEmployee();
-      } 
-      else if(answer.options === "Remove employee") {
+        break;
+        
+        case "Remove employee":
         removeEmployee();
-      } 
-      else if(answer.options === "Update employee role") {
+        break;
+
+        case "Update employee role":
         updateRole();
-      } 
-      else if(answer.options === "Update employee manager") {
+        break;
+
+        case "Update employee manager":
         updateManager();
-      } else{
-        connection.end();
+        break;
       }
-    });
+    });  
 }
 
 function showEmployees() {
@@ -94,7 +100,7 @@ function showEmployees() {
     };
 
     function empManager() {
-      mysqlConnection.query('SELECT employee.first_name, employee.last_name, role.title, manager_id FROM employee INNER JOIN role ON role.id = employee.role_id WHERE manager_id = "Manager"', (err, rows, fields) =>{
+      mysqlConnection.query('SELECT employee.first_name, employee.last_name, role.title, manager_id FROM employee INNER JOIN role ON role.id = employee.role_id', (err, rows, fields) =>{
         if(!err)
         console.table(rows);
         else
@@ -135,56 +141,50 @@ function showEmployees() {
             name: "manager",
             type: "input",
             message: "Who would be the employee's manager?",
+
           }
         ])
-        .then(function(answer) {
-          // when finished prompting, insert a new item into the db with that info
-          connection.query(
-            "INSERT INTO auctions SET ?",
-            {
-              item_name: answer.item,
-              category: answer.category,
-              starting_bid: answer.startingBid || 0,
-              highest_bid: answer.startingBid || 0
-            },
-            function(err) {
-              if (err) throw err;
-              console.log("Your auction was created successfully!");
-              // re-prompt the user for if they want to bid or post
+        .then(function(emp) {
+          var sql = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
+          console.log(emp);
+          mysqlConnection.query(sql,[emp.first_name, emp.last_name, emp.role_id, emp.manager_id], (err, rows, fields) =>{
+              if(!err)
+              res.send('Employee added successfully.');
+              else
+              console.log(err);
               start();
-            }
-          );
+          })    
         });
     }
 
-    function removeEmployee() {
-      mysqlConnection.query('SELECT employee AS role_id FROM employee INNER JOIN id ON role = department_id', (err, rows, fields) =>{
-        if(!err)
-        console.log(rows);
-        else
-        console.log(err);
-        start();
-    }) 
-    };
+    // function removeEmployee() {
+    //   mysqlConnection.query('SELECT employee AS role_id FROM employee INNER JOIN id ON role = department_id', (err, rows, fields) =>{
+    //     if(!err)
+    //     console.log(rows);
+    //     else
+    //     console.log(err);
+    //     start();
+    // }) 
+    // };
 
-    function updateRole() {
-      mysqlConnection.query('SELECT employee AS role_id FROM employee INNER JOIN id ON role = department_id', (err, rows, fields) =>{
-        if(!err)
-        console.log(rows);
-        else
-        console.log(err);
-        start();
-    }) 
-    };
+    // function updateRole() {
+    //   mysqlConnection.query('SELECT employee AS role_id FROM employee INNER JOIN id ON role = department_id', (err, rows, fields) =>{
+    //     if(!err)
+    //     console.log(rows);
+    //     else
+    //     console.log(err);
+    //     start();
+    // }) 
+    // };
 
-    function updateManager() {
-      mysqlConnection.query('SELECT employee AS role_id FROM employee INNER JOIN id ON role = department_id', (err, rows, fields) =>{
-        if(!err)
-        console.log(rows);
-        else
-        console.log(err);
-        start();
-    }) 
-    };
+    // function updateManager() {
+    //   mysqlConnection.query('SELECT employee AS role_id FROM employee INNER JOIN id ON role = department_id', (err, rows, fields) =>{
+    //     if(!err)
+    //     console.log(rows);
+    //     else
+    //     console.log(err);
+    //     start();
+    // }) 
+    // };
 
 //module.exports = prompt;
