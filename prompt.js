@@ -118,6 +118,20 @@ function start() {
     }) 
     };
 
+    function getRoles() {
+      return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT role.title FROM role', function(err, results) {
+          if (err) return reject(err);
+          let roleNames = [];
+          for (var i = 0; i < results.length; i++){
+            roleNames.push(results[i].title);
+            console.log("Titles", roleNames)
+          }
+          return resolve(roleNames);
+        })
+      })
+    }
+
     function getEmployees(){
       return new Promise((resolve, reject) => {
         mysqlConnection.query("SELECT employee.first_name, employee.last_name FROM employee", function(err, results) {
@@ -129,6 +143,7 @@ function start() {
           }
           return resolve(employeeNames);
         })
+        start();
       });
     }
 
@@ -149,8 +164,8 @@ function start() {
             type: 'list',
             name: "role_id",
             message: "Select a role for the employee",
-            choices: viewRoles
-        },
+            choices: getRoles
+          },
           {
             type: "list",
             name: "manager_id",
@@ -170,52 +185,51 @@ function start() {
         })
     }
 
-  //   function updateRole() {
-  //     inquirer
-  //       .prompt(
-  //         [
-  //           {
-  //           name: "role",
-  //           type: "input",
-  //           message: "Add title for new role"
-  //           },
-  //       ]
+    function updateRole() {
+      inquirer
+        .prompt(
+          [
+            {
+              type: 'list',
+              name: "role_id",
+              message: "Select a new role for the employee",
+              choices: getRoles
+            },
+        ]
 
-  //       .then(function (newRole) {
-  //         var sql = 'UPDATE role (role.title) VALUES (?)';
-  //         console.log(newRole);
-  //         mysqlConnection.query(sql,[role.title], (err, rows, fields) =>{
-  //           if(!err)
-  //           console.log(rows);
-  //           else
-  //           console.log(err);
-  //           start();
-  //       });
-  //     }))
-  // } 
+        .then(function (newRole) {
+          var sql = 'UPDATE role (role.title) VALUES (?)';
+          console.log(newRole);
+          mysqlConnection.query(sql,[role.title], (err, rows, fields) =>{
+            if(!err)
+            console.log(rows);
+            else
+            console.log(err);
+            start();
+        });
+      }))
+  } 
 
-  //   function removeEmployee() {
-  //     inquirer
-  //       .prompt([
-  //         {
-  //           name: "employee",
-  //           type: "list",
-  //           message: "Select which employee you want to remove",
-  //           choices: [
-  //             "10", "11", "12", "13"
-  //           ]
-  //         }
-  //         ])
-  //   .then(function(req) {
-  //     mysqlConnection.query('DELETE FROM employee WHERE role_id = employee.id', (err, rows, fields) =>{
-  //       if(!err)
-  //       console.log(rows);
-  //       else
-  //       console.log(err);
-  //       start();
-  //     });
-  //   });  
-  // }
+    function removeEmployee() {
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "manager_id",
+            message: "Select an employee to remove",
+            choices: getEmployees
+          },
+          ])
+    .then(function(req) {
+      mysqlConnection.query('DELETE FROM employee WHERE role_id = ?', (err, rows, fields) =>{
+        if(!err)
+        console.log(rows);
+        else
+        console.log(err);
+        start();
+      });
+    });  
+  }
 
     // function removeEmployee() {
     //   mysqlConnection.query('DELETE FROM employee WHERE id = ? ', (err, rows, fields) =>{
@@ -244,12 +258,5 @@ module.exports = {
   empManager,
   viewRoles,
   addEmployee,
-  // removeEmployee,
-  // updateRole,
-  // updateManager
+ 
 };
-
-// let emplRoles = await viewAllRole(); //array for the choices
-// console.log("employee role:", emplRoles)
-// let viewManagers = await viewManager();
-// console.log("view manager:", viewManagers)
