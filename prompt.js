@@ -108,7 +108,6 @@ function start() {
         start();
     }) 
     };
-
     function viewRoles() {
       mysqlConnection.query('SELECT * FROM role', (err, rows, fields) =>{
         if(!err)
@@ -118,6 +117,20 @@ function start() {
         start();
     }) 
     };
+
+    function getEmployees(){
+      return new Promise((resolve, reject) => {
+        mysqlConnection.query("SELECT employee.first_name, employee.last_name FROM employee", function(err, results) {
+          if (err) return reject(err);
+          let employeeNames = [];
+          for (var i = 0; i < results.length; i++){
+              employeeNames.push(results[i].first_name + " " + results[i].last_name);
+              console.log("All Employees:", employeeNames)
+          }
+          return resolve(employeeNames);
+        })
+      });
+    }
 
     function addEmployee() {
       inquirer
@@ -133,16 +146,16 @@ function start() {
             message: "What's the employee's last name?"
           },
           {
-              type: 'list',
-              name: "role_id",
-              message: "Select a role for the employee",
-              choices: viewRoles
-          },
+            type: 'list',
+            name: "role_id",
+            message: "Select a role for the employee",
+            choices: viewRoles
+        },
           {
             type: "list",
             name: "manager_id",
             message: "Select a manager for the employee",
-            choices: showEmployees
+            choices: getEmployees
           },
         ])
         .then(function(res) {
