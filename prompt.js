@@ -24,7 +24,6 @@ mysqlConnection.connect((err) =>{
 
 app.listen(3000,()=>console.log('Express server is listening at port 3000!'));
 
-// function which prompts the user for what action they should take
 function start() {
   inquirer
     .prompt({
@@ -38,8 +37,8 @@ function start() {
           "View all roles",
           "Add employee", 
           "Remove employee", 
-          "Update employees role",
-          "Update employees manager"
+          "Update employee role",
+          "Update employee manager"
         ]
     })
     .then(function(answer) {
@@ -77,7 +76,7 @@ function start() {
         break;
       }
     });  
-}
+
 
   function showEmployees() {
       mysqlConnection.query('SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.dept_name FROM employee INNER JOIN role ON role.id = employee.role_id INNER JOIN department ON role.department_id = department.id', (err, rows, fields) =>{
@@ -148,8 +147,10 @@ function start() {
     }
 
     function addEmployee() {
+
       let employee_id;
       let manager_id;
+
       inquirer
         .prompt([
           {
@@ -163,7 +164,7 @@ function start() {
             message: "What's the employee's last name?"
           },
           {
-            type: 'list',
+            type: "list",
             name: "role_id",
             message: "Select a role for the new employee",
             choices: getRoles
@@ -177,17 +178,16 @@ function start() {
         ])
         .then(function(res) {
           console.log("response", res);
+
           mysqlConnection.query(
             "SELECT id FROM role WHERE ?",
-            { title: res.role_id },
-            function (err, department) {
+            { title: res.role_id }, (err, department) => {
               if (err) throw err;
-              console.log(department)
-          let employeeFirstName = res.manager_id.split(" ").slice(0, -1).join(" ");
-          let employeeLastName = res.manager_id.split(" ").slice(-1).join(" ");
-          console.log("manager", employeeFirstName, employeeLastName);
-          manager_id = department[0].id
-          mysqlConnection.query(
+            let employeeFirstName = res.manager_id.split(" ").slice(0, -1).join(" ");
+            let employeeLastName = res.manager_id.split(" ").slice(-1).join(" ");
+          
+            manager_id = department[0].id
+            mysqlConnection.query(
             "SELECT id FROM employee WHERE ? AND ?",
             [{ first_name: employeeFirstName }, { last_name: employeeLastName }],
             function (err, role_id) {
@@ -201,7 +201,6 @@ function start() {
           mysqlConnection.query(sql, [res.first_name, res.last_name, employee_id, manager_id ], 
             function(err,res) {
             if (err) throw err; 
-            // const roleChoices = (res);
             console.log(res);
                 start()
           });
@@ -222,13 +221,10 @@ function start() {
           ])
 
     .then(function(result) {
-      console.log(result)
 
        let employeeFirstName = result.manager_id.split(" ").slice(0, -1).join(" ");
-       console.log(employeeFirstName)
        let employeeLastName = result.manager_id.split(" ").slice(-1).join(" ");
-       console.log(employeeLastName)
-      // [{ first_name: employeeFirstName }, { last_name: employeeLastName }],
+
       mysqlConnection.query('DELETE FROM employee WHERE first_name = ? and last_name = ?', [employeeFirstName,employeeLastName],(err, rows, fields) =>{
         if(!err)
         console.log(rows);
@@ -237,23 +233,29 @@ function start() {
         start();
       });
     });  
-  }
+    }
 
     function updateRole() {
       inquirer
         .prompt([
-            {
-              type: 'list',
-              name: "role_id",
-              message: "Select a new role for the employee",
-              choices: getRoles
-            },
-        ])
+        {
+          type: "list",
+          name: "role_id",
+          message: "Select an employee to update role",
+          choices: getEmployees
+        },
+          {
+            type: 'list',
+            name: "role_title",
+            message: "Select a new role for the employee",
+            choices: getRoles
+          },
+          ])
 
         .then(function (res) {
           var sql = 'INSERT INTO employee (role.id, role.title) VALUES (?, ?)';
           console.log(res);
-          mysqlConnection.query(sql,[role.id, role.title], (err, rows, fields) =>{
+          mysqlConnection.query(sql,[res.role.id, res.role.title], (err, rows, fields) =>{
             if(!err)
             console.log(rows);
             else
@@ -267,17 +269,23 @@ function start() {
       inquirer
         .prompt([
             {
-              type: "list",
-              name: "manager_id",
-              message: "Select a manager for the employee",
-              choices: getEmployees
+            type: "list",
+            name: "role_id",
+            message: "Select an employee to update role",
+            choices: getEmployees
+            },
+            {
+            type: "list",
+            name: "manager_id",
+            message: "Select a manager for the employee",
+            choices: getEmployees
             }
           ])
 
           .then(function(newManager) {
             var sql = 'SELECT employee AS role_id FROM employee INNER JOIN id ON role = department_id';
             console.log(newManager);
-            mysqlConnection.query(sql,[employee.manager_id], (err, rows, fields) => {
+            mysqlConnection.query(sql,[newManager.manager_id], (err, rows, fields) => {
               if(!err)
             console.log(rows);
             else
@@ -287,16 +295,16 @@ function start() {
           }) 
     };
 
+  };
 
-
-module.exports = {
-  start,
-  showEmployees,
-  empDepartment,
-  empManager,
-  viewRoles,
-  addEmployee,
-  removeEmployee,
-  updateRole,
-  updateManager
-};
+  // module.exports = {
+  //   start,
+  //   showEmployees,
+  //   empDepartment,
+  //   empManager,
+  //   viewRoles,
+  //   addEmployee,
+  //   removeEmployee,
+  //   updateRole,
+  // updateManager
+  // }:
