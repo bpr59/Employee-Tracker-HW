@@ -240,22 +240,23 @@ function start() {
         .prompt([
         {
           type: "list",
-          name: "role.id",
+          name: "role_id",
           message: "Select an employee to update role",
           choices: getEmployees
         },
           {
             type: 'list',
-            name: "role.title",
+            name: ".title",
             message: "Select a new role for the employee",
             choices: getRoles
           },
           ])
 
         .then(function (res) {
-          var sql = 'INSERT INTO employee (role_id, role.title) VALUES (?, ?)';
-          console.log(res);
-          mysqlConnection.query(sql,[res.role.id, res.role.title], (err, rows, fields) =>{
+          var sql = 'UPDATE employee SET role_id = ? WHERE role_id = role.title';
+          //var sql = 'INSERT INTO employee (role_id, role.title) VALUES (?, ?)';
+          console.log("response", res);
+          mysqlConnection.query(sql,[res.role_id, res.role.title], (err, rows, fields) =>{
             if(!err)
             console.log(rows);
             else
