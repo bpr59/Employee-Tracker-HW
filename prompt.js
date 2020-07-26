@@ -240,20 +240,20 @@ function start() {
         .prompt([
         {
           type: "list",
-          name: "role_id",
+          name: "role.id",
           message: "Select an employee to update role",
           choices: getEmployees
         },
           {
             type: 'list',
-            name: "role_title",
+            name: "role.title",
             message: "Select a new role for the employee",
             choices: getRoles
           },
           ])
 
         .then(function (res) {
-          var sql = 'INSERT INTO employee (role.id, role.title) VALUES (?, ?)';
+          var sql = 'INSERT INTO employee (role_id, role.title) VALUES (?, ?)';
           console.log(res);
           mysqlConnection.query(sql,[res.role.id, res.role.title], (err, rows, fields) =>{
             if(!err)
@@ -297,14 +297,14 @@ function start() {
 
   };
 
-  // module.exports = {
-  //   start,
-  //   showEmployees,
-  //   empDepartment,
-  //   empManager,
-  //   viewRoles,
-  //   addEmployee,
-  //   removeEmployee,
-  //   updateRole,
-  // updateManager
-  // }:
+// module.export = {
+//     start, 
+//     showEmployees,
+//     empDepartment,
+//     empManager,
+//     viewRoles,
+//     addEmployee,
+//     removeEmployee,
+//     updateRole,
+//     updateManager
+//   };
