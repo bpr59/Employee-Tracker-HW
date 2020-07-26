@@ -271,7 +271,7 @@ function start() {
         .prompt([
             {
             type: "list",
-            name: "role_id",
+            name: "employee.id",
             message: "Select an employee to update role",
             choices: getEmployees
             },
@@ -283,10 +283,10 @@ function start() {
             }
           ])
 
-          .then(function(newManager) {
-            var sql = 'SELECT employee AS role_id FROM employee INNER JOIN id ON role = department_id';
-            console.log(newManager);
-            mysqlConnection.query(sql,[newManager.manager_id], (err, rows, fields) => {
+          .then(function(res) {
+            var sql = 'UPDATE employee SET employee.id = ? WHERE manager_id = employee.id';
+            console.log("newManager", res);
+            mysqlConnection.query(sql,[res.employee.id, res.manager_id], (err, rows, fields) => {
               if(!err)
             console.log(rows);
             else
