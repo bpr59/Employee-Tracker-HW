@@ -148,6 +148,8 @@ function start() {
     }
 
     function addEmployee() {
+      let employee_id;
+      let manager_id;
       inquirer
         .prompt([
           {
@@ -180,32 +182,34 @@ function start() {
             { title: res.role_id },
             function (err, department) {
               if (err) throw err;
-              
+              console.log(department)
           let employeeFirstName = res.manager_id.split(" ").slice(0, -1).join(" ");
           let employeeLastName = res.manager_id.split(" ").slice(-1).join(" ");
           console.log("manager", employeeFirstName, employeeLastName);
-
-          connection.query(
-            "SELECT id FROM employees WHERE ? AND ?",
+          manager_id = department[0].id
+          mysqlConnection.query(
+            "SELECT id FROM employee WHERE ? AND ?",
             [{ first_name: employeeFirstName }, { last_name: employeeLastName }],
             function (err, role_id) {
+              employee_id = role_id[0].id
               if (err) {
                 console.log(err);
                 throw err;
               }
-          var sql = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
+          var sql = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)';
           
-          mysqlConnection.query(sql, { first_name: res.first_name, last_name: res.last_name, role_id: role_id[0], manager_id: department[0] }, 
+          mysqlConnection.query(sql, [res.first_name, res.last_name, employee_id, manager_id ], 
             function(err,res) {
             if (err) throw err; 
             // const roleChoices = (res);
             console.log(res);
-                // start()
+                start()
           });
         })
     })
-  })
+  });
 }
+
     function removeEmployee() {
       inquirer
         .prompt([
@@ -216,11 +220,16 @@ function start() {
             choices: getEmployees
           },
           ])
-    .then(function(req) {
-      let employeeFirstName = res.first_name.split(" ").slice(0, -1).join(" ");
-      let employeeLastName = res.last_name.split(" ").slice(-1).join(" ");
-      [{ first_name: employeeFirstName }, { last_name: employeeLastName }],
-      mysqlConnection.query('DELETE FROM employee WHERE ? = ?', (err, rows, fields) =>{
+
+    .then(function(result) {
+      console.log(result)
+
+       let employeeFirstName = result.manager_id.split(" ").slice(0, -1).join(" ");
+       console.log(employeeFirstName)
+       let employeeLastName = result.manager_id.split(" ").slice(-1).join(" ");
+       console.log(employeeLastName)
+      // [{ first_name: employeeFirstName }, { last_name: employeeLastName }],
+      mysqlConnection.query('DELETE FROM employee WHERE first_name = ? and last_name = ?', [employeeFirstName,employeeLastName],(err, rows, fields) =>{
         if(!err)
         console.log(rows);
         else
@@ -278,16 +287,16 @@ function start() {
           }) 
     };
 
-    // addEmployee();
 
-// module.exports = {
-//   start,
-//   showEmployees,
-//   empDepartment,
-//   empManager,
-//   viewRoles,
-//   addEmployee,
-//   removeEmployee,
-//   updateRole,
-//   updateManager
-// };
+
+module.exports = {
+  start,
+  showEmployees,
+  empDepartment,
+  empManager,
+  viewRoles,
+  addEmployee,
+  removeEmployee,
+  updateRole,
+  updateManager
+};
