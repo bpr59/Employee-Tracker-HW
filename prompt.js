@@ -236,6 +236,10 @@ function start() {
     }
 
     function updateRole() {
+
+      let role_id
+      let role
+      
       inquirer
         .prompt([
         {
@@ -246,7 +250,7 @@ function start() {
         },
           {
             type: 'list',
-            name: ".title",
+            name: "role.title",
             message: "Select a new role for the employee",
             choices: getRoles
           },
@@ -256,7 +260,8 @@ function start() {
           var sql = 'UPDATE employee SET role_id = ? WHERE role_id = role.title';
           //var sql = 'INSERT INTO employee (role_id, role.title) VALUES (?, ?)';
           console.log("response", res);
-          mysqlConnection.query(sql,[res.role_id, res.role.title], (err, rows, fields) =>{
+          mysqlConnection.query(sql, [role_id, role.title], (err, rows, fields) =>{
+            console.log("role", role.title);
             if(!err)
             console.log(rows);
             else
@@ -284,7 +289,7 @@ function start() {
           ])
 
           .then(function(res) {
-            var sql = 'UPDATE employee SET employee.id = ? WHERE manager_id = employee.id';
+            var sql = 'UPDATE employee SET employee.id = ? WHERE employee.id = manager_id';
             console.log("newManager", res);
             mysqlConnection.query(sql,[res.employee.id, res.manager_id], (err, rows, fields) => {
               if(!err)
@@ -299,13 +304,4 @@ function start() {
   };
 
 // module.export = {
-//     start, 
-//     showEmployees,
-//     empDepartment,
-//     empManager,
-//     viewRoles,
-//     addEmployee,
-//     removeEmployee,
-//     updateRole,
-//     updateManager
-//   };
+//     start, showEmployees, empDepartment, empManager, viewRoles, addEmployee, removeEmployee, updateRole, updateManager };
