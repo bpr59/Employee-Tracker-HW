@@ -6,6 +6,8 @@ const bodyparser = require('body-parser');
 
 app.use(bodyparser.json());
 
+//connection to mysql database
+
 var mysqlConnection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -82,6 +84,8 @@ app.put('/employee', (req, res) =>{
     })    
 });
 
+//function to start all necessary queries.
+
 function start() {
     inquirer
       .prompt({
@@ -99,6 +103,9 @@ function start() {
             "Update employee manager"
           ]
       })
+
+      //switch function to manage all queries and link to specific request query
+
       .then(function(answer) {
         switch (answer.options) {
         case "View all employees":
@@ -135,7 +142,8 @@ function start() {
         }
       });  
   
-  
+//function to display all employees in a table in Terminal
+
     function showEmployees() {
         mysqlConnection.query('SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.dept_name FROM employee INNER JOIN role ON role.id = employee.role_id INNER JOIN department ON role.department_id = department.id', (err, rows, fields) =>{
           if(!err)
@@ -145,6 +153,8 @@ function start() {
           start();
       }) 
       };
+
+//function to display all employees by department      
   
     function empDepartment() {
         mysqlConnection.query('SELECT employee.first_name, employee.last_name, employee.role_id, department.dept_name FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id', (err, rows, fields) =>{
@@ -156,6 +166,8 @@ function start() {
       }) 
       };
   
+//function to display all employees by manager id  
+
     function empManager() {
         mysqlConnection.query('SELECT employee.first_name, employee.last_name, role.title, manager_id FROM employee INNER JOIN role ON role.id = employee.role_id', (err, rows, fields) =>{
           if(!err)
@@ -165,7 +177,9 @@ function start() {
           start();
       }) 
       };
-  
+
+//function to display all available roles in database
+
       function viewRoles() {
         mysqlConnection.query('SELECT * FROM role', (err, rows, fields) =>{
           if(!err)
@@ -175,6 +189,8 @@ function start() {
           start();
       }) 
       };
+
+//Secondary function needed to access Role values to use in other queries      
   
       function getRoles() {
         return new Promise((resolve, reject) => {
@@ -190,6 +206,8 @@ function start() {
         })
       }
   
+//Secondary function needed to access list of employees to use in other queries 
+
       function getEmployees(){
         return new Promise((resolve, reject) => {
           mysqlConnection.query("SELECT employee.first_name, employee.last_name FROM employee", function(err, results) {
@@ -197,12 +215,13 @@ function start() {
             let employeeNames = [];
             for (var i = 0; i < results.length; i++){
                 employeeNames.push(results[i].first_name + " " + results[i].last_name);
-                // console.log("All Employees:", employeeNames)
             }
             return resolve(employeeNames);
           })
         });
       }
+
+//Function to add new employee to the database      
   
       function addEmployee() {
   
@@ -234,6 +253,9 @@ function start() {
               choices: getEmployees
             },
           ])
+
+        //function to process query response and deliver content to database
+
           .then(function(res) {
             console.log("response", res);
   
@@ -267,6 +289,8 @@ function start() {
     });
   }
   
+//Function to delete employee from the database   
+
       function removeEmployee() {
         inquirer
           .prompt([
@@ -278,6 +302,8 @@ function start() {
             },
             ])
   
+      //function to process query response and deliver content to database
+
       .then(function(result) {
   
          let employeeFirstName = result.manager_id.split(" ").slice(0, -1).join(" ");
@@ -293,6 +319,8 @@ function start() {
       });  
       }
   
+//Function to update the role of the employee in the database  
+
       function updateRole() {
   
         let role_id;
@@ -315,9 +343,10 @@ function start() {
             },
             ])
   
+          //function to process query response and deliver content to database
+
           .then(function (res) {
             var sql = 'UPDATE employee SET role_id = ? WHERE role_id = ?';
-            //var sql = 'INSERT INTO employee (role_id, role.title) VALUES (?, ?)';
             console.log("response", res);
             mysqlConnection.query(sql, [role_id, title], (err, rows, fields) =>{
               console.log("title", title);
@@ -329,7 +358,9 @@ function start() {
           });
         });
       } 
-  
+
+//Function to update the mananger of the employee in the database  
+
       function updateManager() {
         inquirer
           .prompt([
