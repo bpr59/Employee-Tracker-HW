@@ -243,102 +243,102 @@ function start() {
 
 //Secondary function needed to access Role values to use in other queries      
   
-      function getRoles() {
-        return new Promise((resolve, reject) => {
-          mysqlConnection.query('SELECT role.title FROM role', function(err, results) {
-            if (err) return reject(err);
-            let roleNames = [];
-            for (var i = 0; i < results.length; i++){
-              roleNames.push(results[i].title);
-              // console.log("Titles", roleNames)
-            }
-            return resolve(roleNames);
-          })
+    function getRoles() {
+      return new Promise((resolve, reject) => {
+        mysqlConnection.query('SELECT role.title FROM role', function(err, results) {
+          if (err) return reject(err);
+          let roleNames = [];
+          for (var i = 0; i < results.length; i++){
+            roleNames.push(results[i].title);
+            // console.log("Titles", roleNames)
+          }
+          return resolve(roleNames);
         })
-      }
+      })
+    }
   
 //Secondary function needed to access list of employees to use in other queries 
 
-      function getEmployees(){
-        return new Promise((resolve, reject) => {
-          mysqlConnection.query("SELECT employee.first_name, employee.last_name FROM employee", function(err, results) {
-            if (err) return reject(err);
-            let employeeNames = [];
-            for (var i = 0; i < results.length; i++){
-                employeeNames.push(results[i].first_name + " " + results[i].last_name);
-            }
-            return resolve(employeeNames);
-          })
-        });
-      }
+    function getEmployees(){
+      return new Promise((resolve, reject) => {
+        mysqlConnection.query("SELECT employee.first_name, employee.last_name FROM employee", function(err, results) {
+          if (err) return reject(err);
+          let employeeNames = [];
+          for (var i = 0; i < results.length; i++){
+              employeeNames.push(results[i].first_name + " " + results[i].last_name);
+          }
+          return resolve(employeeNames);
+        })
+      });
+    }
 
 //Function to add new employee to the database      
   
-      function addEmployee() {
+function addEmployee() {
   
-        let employee_id;
-        let manager_id;
-  
-        inquirer
-          .prompt([
-            {
-              name: "first_name",
-              type: "input",
-              message: "What's the employee's first name?"
-            },
-            {
-              name: "last_name",
-              type: "input",
-              message: "What's the employee's last name?"
-            },
-            {
-              type: "list",
-              name: "role_id",
-              message: "Select a role for the new employee",
-              choices: getRoles
-            },
-            {
-              type: "list",
-              name: "manager_id",
-              message: "Select a manager for the new employee",
-              choices: getEmployees
-            },
-          ])
+  let employee_id;
+  let manager_id;
 
-        //function to process query response and deliver content to database
+  inquirer
+    .prompt([
+      {
+        name: "first_name",
+        type: "input",
+        message: "What's the employee's first name?"
+      },
+      {
+        name: "last_name",
+        type: "input",
+        message: "What's the employee's last name?"
+      },
+      {
+        type: "list",
+        name: "role_id",
+        message: "Select a role for the new employee",
+        choices: getRoles
+      },
+      {
+        type: "list",
+        name: "manager_id",
+        message: "Select a manager for the new employee",
+        choices: getEmployees
+      },
+    ])
 
-          .then(function(res) {
-            console.log("response", res);
-  
-            mysqlConnection.query(
-              "SELECT id FROM role WHERE ?",
-              { title: res.role_id }, (err, department) => {
-                if (err) throw err;
-              let employeeFirstName = res.manager_id.split(" ").slice(0, -1).join(" ");
-              let employeeLastName = res.manager_id.split(" ").slice(-1).join(" ");
-            
-              manager_id = department[0].id
-              mysqlConnection.query(
-              "SELECT id FROM employee WHERE ? AND ?",
-              [{ first_name: employeeFirstName }, { last_name: employeeLastName }],
-              function (err, role_id) {
-                employee_id = role_id[0].id
-                if (err) {
-                  console.log(err);
-                  throw err;
-                }
-            var sql = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)';
-            
-            mysqlConnection.query(sql, [res.first_name, res.last_name, employee_id, manager_id ], 
-              function(err,res) {
-              if (err) throw err; 
-              console.log(res);
-                  start()
-            });
-          })
-      })
-    });
-  }
+  //function to process query response and deliver content to database
+
+    .then(function(res) {
+      console.log("response", res);
+
+      mysqlConnection.query(
+        "SELECT id FROM role WHERE ?",
+        { title: res.role_id }, (err, department) => {
+          if (err) throw err;
+        let employeeFirstName = res.manager_id.split(" ").slice(0, -1).join(" ");
+        let employeeLastName = res.manager_id.split(" ").slice(-1).join(" ");
+      
+        manager_id = department[0].id
+        mysqlConnection.query(
+        "SELECT id FROM employee WHERE ? AND ?",
+        [{ first_name: employeeFirstName }, { last_name: employeeLastName }],
+        function (err, role_id) {
+          employee_id = role_id[0].id
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+      var sql = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)';
+      
+      mysqlConnection.query(sql, [res.first_name, res.last_name, employee_id, manager_id ], 
+        function(err,res) {
+        if (err) throw err; 
+        console.log(res);
+            start()
+      });
+    })
+})
+});
+}
   
 //Function to add a department to the database  
 
@@ -447,21 +447,18 @@ function start() {
 //Function to update the role of the employee in the database  
 
       function updateRole() {
-  
-        let role_id;
-        //let = role.title;
         
         inquirer
           .prompt([
           {
             type: "list",
-            name: "role_id",
+            name: "empId",
             message: "Select an employee to update role",
             choices: getEmployees
           },
             {
               type: 'list',
-              name: "role",
+              name: "roleId",
               message: "Select a new role for the employee",
               choices: getRoles
             },
@@ -472,7 +469,7 @@ function start() {
           .then(function (res) {
             var sql = 'UPDATE employee SET role_id = (SELECT id FROM role WHERE employee.role_id = id)';
             console.log("response", res);
-            mysqlConnection.query(sql, [res.role_id, res.role.id], (err, rows, fields) =>{
+            mysqlConnection.query(sql, [res.roleId, res.empId], (err, rows, fields) =>{
               if(!err)
               console.log(rows);
               else
