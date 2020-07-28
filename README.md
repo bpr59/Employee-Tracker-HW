@@ -1,6 +1,6 @@
 # Employee-Tracker
 
-<img alt="npm" src="https://img.shields.io/npm/v/enquirer?style=flat-square"> <img alt="npm" src="https://img.shields.io/npm/v/jest?style=flat-square">  <img alt="NPM" src="https://img.shields.io/npm/l/express?style=flat-square">
+<img alt="npm" src="https://img.shields.io/npm/v/enquirer?style=flat-square"> <img alt="npm" src="https://img.shields.io/npm/v/jest?style=flat-square">  <img alt="NPM" src="https://img.shields.io/npm/l/express?style=flat-square">  <img alt="David" src="https://img.shields.io/david/bpr59/Employee-Tracker-HW?style=flat-square">  <img alt="node-current" src="https://img.shields.io/node/v/mysql?style=flat-square">  <img alt="node-current" src="https://img.shields.io/node/v/express?style=flat-square">
     
 ## Description
 In this homework assignment, your challenge is to architect and build a solution for managing a company's employees using node, inquirer, and MySQL.
@@ -44,16 +44,33 @@ In this homework assignment, your challenge is to architect and build a solution
 
   <img src="images/SS-LocalHost-SingleEmp.png">     
 
-  - In input page, you can add a new note by adding a title and text.
-  - Next step is to save the note and request a new note template.
-  - The saved note can be seen on the sidebar once the user refreshes the page.
+  - In mySql you can see all three requested tables:
 
-  <img src="public/assets/css/images/SS-InputPage.png">
+  <img src="images/SS-MYSQL-Dept.png" height = 400px >  
 
-  - A completed process would be to delete the note on the sidebar by using the trashcan icon.
-  - Finally, a wrong LocalHost URL address will respond with a 404 page.
+  <img src="images/SS-MYSQL-employee.png" height = 400px>  
 
-  <img src="public/assets/css/images/SS-404PageNew.png">
+  <img src="images/SS-MYSQL-roles.png" height = 400px>  
+
+  - The functions where also tested via Postman to confirm app.get / delete / post /put.
+
+        * Get all employees list via Postman
+
+  <img src="images/SS-Postman-GetAll.png" height = 400px > 
+
+        * Get single employee via Postman using Id
+
+  <img src="images/SS-Postman-GetSingle.png" height = 400px > 
+
+        * Confirmation of added employee via Postman
+
+  <img src="images/SS-Postman-Post.png" height = 400px > 
+
+        * Confirmation of deleted employee via Postman
+
+  <img src="images/SS-PostmanDelete.png" height = 400px > 
+
+  - A successful application will allow the user to complete all views plus add, delete and update content as needed.
     
 ### email: 
   - bpr59@comcast.net
