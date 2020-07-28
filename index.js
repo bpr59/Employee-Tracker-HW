@@ -449,8 +449,7 @@ function start() {
       function updateRole() {
   
         let role_id;
-        let title;
-      
+        //let = role.title;
         
         inquirer
           .prompt([
@@ -462,7 +461,7 @@ function start() {
           },
             {
               type: 'list',
-              name: "title",
+              name: "role",
               message: "Select a new role for the employee",
               choices: getRoles
             },
@@ -471,10 +470,9 @@ function start() {
           //function to process query response and deliver content to database
 
           .then(function (res) {
-            var sql = 'UPDATE employee SET (role_id, title) VALUES (?, ?)';
+            var sql = 'UPDATE employee SET role_id = (SELECT id FROM role WHERE employee.role_id = id)';
             console.log("response", res);
-            mysqlConnection.query(sql, [role_id, title], (err, rows, fields) =>{
-              console.log("title", title);
+            mysqlConnection.query(sql, [res.role_id, res.role.id], (err, rows, fields) =>{
               if(!err)
               console.log(rows);
               else
