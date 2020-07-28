@@ -47,6 +47,26 @@ app.get('/employee/:id', (req, res) =>{
     })    
 });
 
+//Display all departments in DB
+app.get('/department', (req, res) =>{
+    mysqlConnection.query('SELECT * FROM department',[req.params.id], (err, rows, fields) =>{
+        if(!err)
+        res.send(rows);
+        else
+        console.log(err);
+    })    
+});
+
+//Display all roles in DB
+app.get('/role', (req, res) =>{
+    mysqlConnection.query('SELECT * FROM role',[req.params.id], (err, rows, fields) =>{
+        if(!err)
+        res.send(rows);
+        else
+        console.log(err);
+    })    
+});
+
 //Delete a specific employee from the DB
 app.delete('/employee/:id', (req, res) =>{
     mysqlConnection.query('DELETE FROM employee WHERE id = ? ', [req.params.id], (err, rows, fields) =>{
@@ -66,6 +86,32 @@ app.post('/employee', (req, res) =>{
     mysqlConnection.query(sql,[emp.first_name, emp.last_name, emp.role_id, emp.manager_id], (err, rows, fields) =>{
         if(!err)
         res.send('Employee added successfully.');
+        else
+        console.log(err);
+    })    
+});
+
+//Insert a new department to the DB
+app.post('/department', (req, res) =>{
+    let dept = req.body;
+    var sql = 'INSERT INTO department (dept_name) VALUES (?)';
+    console.log(res);
+    mysqlConnection.query(sql,[dept.dept_name], (err, rows, fields) =>{
+        if(!err)
+        res.send('Department added successfully.');
+        else
+        console.log(err);
+    })    
+});
+
+//Insert a new role to the DB
+app.post('/role', (req, res) =>{
+    let role = req.body;
+    var sql = 'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)';
+    console.log(res);
+    mysqlConnection.query(sql,[role.title, role.salary, role.department_id], (err, rows, fields) =>{
+        if(!err)
+        res.send('Role added successfully.');
         else
         console.log(err);
     })    
@@ -98,9 +144,10 @@ function start() {
             "View all employees by manager",
             "View all roles",
             "Add employee", 
+            "Add department",
+            "Add role",
             "Remove employee", 
-            "Update employee role",
-            "Update employee manager"
+            "Update employee role"
           ]
       })
 
@@ -127,6 +174,14 @@ function start() {
           case "Add employee":
           addEmployee();
           break;
+
+          case "Add department":
+          addDepartment();
+          break;
+
+          case "Add role":
+          addRole();
+          break;
   
           case "Remove employee":
           removeEmployee();
@@ -134,10 +189,6 @@ function start() {
   
           case "Update employee role":
           updateRole();
-          break;
-  
-          case "Update employee manager":
-          updateManager();
           break;
         }
       });  
@@ -289,6 +340,80 @@ function start() {
     });
   }
   
+//Function to add a department to the database  
+
+    function addDepartment() {
+
+      let dept_name;
+
+        inquirer
+        .prompt([
+          {
+            name: "dept_name",
+            type: "input",
+            message: "What department would you like to add?"
+          },
+          ])
+
+        //function to process query response and deliver content to database
+
+        .then(function (res) {
+          var sql = 'INSERT INTO department (dept_name) VALUES ( ? )';
+          console.log("response", res);
+          mysqlConnection.query(sql, [res.dept_name], (err, rows, fields) =>{
+            console.log("dept", dept_name);
+            if(!err)
+            console.log(rows);
+            else
+            console.log(err);
+            start();
+        });
+      });
+    } 
+
+    //Function to add a department to the database  
+
+    function addRole() {
+
+      let title;
+      let salary;
+      let department_id;
+
+      inquirer
+      .prompt([
+        {
+          name: "title",
+          type: "input",
+          message: "What role would you like to add?"
+        },
+        {
+          name: "salary",
+          type: "input",
+          message: "What is the starting salary?"
+        },
+        {
+          name: "department_id",
+          type: "input",
+          message: "What is the department for this new role?"
+        },
+        ])
+
+      //function to process query response and deliver content to database
+
+      .then(function (res) {
+        var sql = 'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)';
+        console.log("response", res);
+        mysqlConnection.query(sql, [res.title, res.salary, res.department_id], (err, rows, fields) =>{
+          console.log("title", title);
+          if(!err)
+          console.log(rows);
+          else
+          console.log(err);
+          start();
+      });
+    });
+  } 
+
 //Function to delete employee from the database   
 
       function removeEmployee() {
@@ -346,7 +471,7 @@ function start() {
           //function to process query response and deliver content to database
 
           .then(function (res) {
-            var sql = 'UPDATE employee SET role_id = ? WHERE role_id = ?';
+            var sql = 'UPDATE employee SET (role_id, title) VALUES (?, ?)';
             console.log("response", res);
             mysqlConnection.query(sql, [role_id, title], (err, rows, fields) =>{
               console.log("title", title);
@@ -357,43 +482,8 @@ function start() {
               start();
           });
         });
-      } 
+      }
 
-//Function to update the mananger of the employee in the database  
-
-      function updateManager() {
-        inquirer
-          .prompt([
-              {
-              type: "list",
-              name: "employee.id",
-              message: "Select an employee to update role",
-              choices: getEmployees
-              },
-              {
-              type: "list",
-              name: "manager_id",
-              message: "Select a manager for the employee",
-              choices: getEmployees
-              }
-            ])
-  
-            .then(function(res) {
-              var sql = 'UPDATE employee SET employee.id = ? WHERE employee.id = manager_id';
-              console.log("newManager", res);
-              mysqlConnection.query(sql,[res.employee.id, res.manager_id], (err, rows, fields) => {
-                if(!err)
-              console.log(rows);
-              else
-              console.log(err);
-              start();
-              });
-            }) 
-      };
-    };
-
+    }
     start();
-
-
-
 
